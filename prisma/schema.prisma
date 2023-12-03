@@ -1,0 +1,41 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator zod {
+    provider = "zod-prisma-types"
+    output   = "../src/server/api/schema/generated"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String
+    email         String    @unique
+    password      String
+    emailVerified DateTime?
+    image         String?
+    createdAt     DateTime  @default(now())
+}
+
+model Visit {
+    id          String    @id @default(cuid())
+    name        String
+    company     Company   @relation(fields: [companyId], references: [id])
+    companyId   Int
+    description String
+    startTime   DateTime
+    endTime     DateTime?
+    createdAt   DateTime  @default(now())
+}
+
+model Company {
+    id        Int      @id @default(autoincrement())
+    name      String
+    Visit     Visit[]
+    createdAt DateTime @default(now())
+}
