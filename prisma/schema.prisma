@@ -8,12 +8,12 @@ generator zod {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mongodb"
     url      = env("DATABASE_URL")
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String    @id @default(auto()) @map("_id") @db.ObjectId
     name          String
     email         String    @unique
     password      String
@@ -23,10 +23,10 @@ model User {
 }
 
 model Visit {
-    id          String    @id @default(cuid())
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
     name        String
     company     Company   @relation(fields: [companyId], references: [id])
-    companyId   Int
+    companyId   String    @db.ObjectId
     description String
     startTime   DateTime
     endTime     DateTime?
@@ -34,7 +34,7 @@ model Visit {
 }
 
 model Company {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String
     Visit     Visit[]
     createdAt DateTime @default(now())

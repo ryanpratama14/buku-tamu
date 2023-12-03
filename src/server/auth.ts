@@ -22,17 +22,8 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-  secret: env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" },
-  callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
-    },
-    async session({ session, token }) {
-      return { ...session, user: { ...session.user, id: token.id } };
-    },
-  },
   adapter: PrismaAdapter(db),
+  secret: env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -52,6 +43,15 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  session: { strategy: "jwt" },
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      return { ...token, ...user };
+    },
+    session: async ({ session, token }) => {
+      return { ...session, user: { ...session.user, id: token.id } };
+    },
+  },
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);
