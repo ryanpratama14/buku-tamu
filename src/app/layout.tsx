@@ -1,9 +1,8 @@
 import "@/styles/globals.css";
-
 import { Poppins } from "next/font/google";
 import { cookies } from "next/headers";
-
 import { TRPCReactProvider } from "@/trpc/react";
+import AntdProvider from "@/components/AntdProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,7 +23,11 @@ export default function RootLayout({ children }: Props) {
   return (
     <html lang="en">
       <body className={`font-poppins ${poppins.variable}`}>
-        <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
+        <TRPCReactProvider cookies={cookies().toString()}>
+          <AntdProvider>
+            <main>{children}</main>
+          </AntdProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

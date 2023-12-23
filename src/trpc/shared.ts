@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "@/server/api/root";
-import { type Pagination } from "@/server/api/schema/schema";
+import { type Pagination } from "@/schema";
 import { type TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 export type TRPC_OK_CODE_KEY = "OK" | "CREATED" | "ACCEPTED" | "NO_CONTENT" | "RESET_CONTENT" | "PARTIAL_CONTENT";
@@ -12,6 +12,20 @@ export type TRPC_CODE_KEY = TRPC_OK_CODE_KEY | TRPC_ERROR_CODE_KEY;
 type A<T extends string> = T extends `${infer U}ScalarFieldEnum` ? U : never;
 type Entity = A<keyof typeof Prisma>;
 type Keys<T extends Entity> = Extract<keyof (typeof Prisma)[keyof Pick<typeof Prisma, `${T}ScalarFieldEnum`>], string>;
+
+export const LOCALE_TAG: string[] | undefined = ["id-ID"];
+
+export const getUTCStartDate = (dateString: string): Date => {
+  const updatedDate = new Date(dateString);
+  updatedDate.setUTCHours(0, 0, 0, 0);
+  return updatedDate;
+};
+
+export const getUTCEndDate = (dateString: string): Date => {
+  const updatedDate = new Date(dateString);
+  updatedDate.setUTCHours(23, 59, 59, 999);
+  return updatedDate;
+};
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
@@ -21,9 +35,7 @@ const getBaseUrl = () => {
 
 export const getUrl = () => `${getBaseUrl()}/api/trpc`;
 
-export const PAGINATION_LIMIT = 10;
-
-export const LOCALE_TAG: undefined | string[] = [];
+export const PAGINATION_LIMIT = 20;
 
 export const ERROR_MESSAGES: Record<TRPC_ERROR_CODE_KEY, string> = {
   PARSE_ERROR: "Error parsing the request. Please check the syntax of your request.",
@@ -52,31 +64,37 @@ export const OK_MESSAGES: Record<TRPC_OK_CODE_KEY, string> = {
   PARTIAL_CONTENT: "Partial content received successfully.",
 };
 
-export const THROW_TRPC_ERROR = (code: TRPC_ERROR_CODE_KEY) => {
-  throw new TRPCError({ code, message: ERROR_MESSAGES[code] });
+export type TRPC_RESPONSE = {
+  code: TRPC_CODE_KEY;
+  status: boolean;
+  message: string;
 };
 
-export const THROW_OK = (code: TRPC_OK_CODE_KEY, message = true) => {
-  if (message) return { code, message: OK_MESSAGES[code] };
-  return code;
+export const THROW_TRPC_ERROR = (code: TRPC_ERROR_CODE_KEY, message?: string) => {
+  throw new TRPCError({ code, message: message ? message : ERROR_MESSAGES[code] });
 };
 
-export const THROW_ERROR = (code: TRPC_ERROR_CODE_KEY, message = true) => {
-  if (message) return { code, message: ERROR_MESSAGES[code] };
-  return code;
-};
+export const THROW_OK = (code: TRPC_OK_CODE_KEY, message?: string): TRPC_RESPONSE => ({
+  code,
+  status: true,
+  message: message ? message : OK_MESSAGES[code],
+});
 
-export const THROW_CODE = (code: TRPC_CODE_KEY, message = true) => {
-  if (message)
-    return {
-      code,
-      message:
-        code in OK_MESSAGES
-          ? (OK_MESSAGES as Record<TRPC_CODE_KEY, string>)[code]
-          : (ERROR_MESSAGES as Record<TRPC_CODE_KEY, string>)[code],
-    };
-  return code;
-};
+export const THROW_ERROR = (code: TRPC_ERROR_CODE_KEY, message?: string): TRPC_RESPONSE => ({
+  code,
+  status: false,
+  message: message ? message : ERROR_MESSAGES[code],
+});
+
+export const THROW_CODE = (code: TRPC_CODE_KEY, message?: string): TRPC_RESPONSE => ({
+  code,
+  status: code in OK_MESSAGES ? true : false,
+  message: message
+    ? message
+    : code in OK_MESSAGES
+      ? (OK_MESSAGES as Record<TRPC_CODE_KEY, string>)[code]
+      : (ERROR_MESSAGES as Record<TRPC_CODE_KEY, string>)[code],
+});
 
 export const prismaExclude = <T extends Entity, K extends Keys<T>>(type: T, omit: K[]) => {
   type Key = Exclude<Keys<T>, K>;
@@ -182,6 +200,18 @@ export const getPaginationData = ({ totalData, limit = PAGINATION_LIMIT, page }:
     hasPrevPage: start > 0,
     isInvalidPage: page > totalPages || page < 1,
   };
+};
+
+export const insensitiveMode = { mode: "insensitive" as Prisma.QueryMode };
+
+export const getSortingQuery = (sorting?: string) => {
+  if (sorting) {
+    const [name, value] = sorting.split("-");
+    return {
+      orderBy: [{ [name!]: value }],
+    };
+  }
+  return undefined;
 };
 
 export const transformer = SuperJSON;
