@@ -8,29 +8,28 @@ datasource db {
 }
 
 model User {
-    id            String    @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    email         String    @unique
-    password      String
-    emailVerified DateTime?
-    image         String?
-    createdAt     DateTime  @default(now())
+    id             String @id @default(auto()) @map("_id") @db.ObjectId
+    username       String @unique
+    hashedPassword String
+
+    createdAt DateTime @default(now())
 }
 
 model Visit {
-    id          String    @id @default(auto()) @map("_id") @db.ObjectId
-    name        String
-    company     Company   @relation(fields: [companyId], references: [id])
-    companyId   String    @db.ObjectId
-    description String
-    startTime   DateTime
-    endTime     DateTime?
-    createdAt   DateTime  @default(now())
+    id             String    @id @default(auto()) @map("_id") @db.ObjectId
+    visitorName    String
+    visitorCompany String
+    description    String
+    phoneNumber    String
+    startTime      DateTime
+    endTime        DateTime?
+    status         Status @default(DRAFT)
+
+    createdAt DateTime @default(now())
 }
 
-model Company {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    Visit     Visit[]
-    createdAt DateTime @default(now())
+enum Status {
+    DRAFT
+    VISITING
+    DONE
 }

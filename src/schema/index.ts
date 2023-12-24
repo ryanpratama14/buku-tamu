@@ -7,18 +7,16 @@ export const regex = {
 
 export class schema {
   // enums
-  static role = z.enum(["OWNER", "ADMIN", "TRAINER", "VISITOR"]).default("VISITOR");
   static gender = z.enum(["MALE", "FEMALE"]);
-  static packageType = z.enum(["MEMBER", "VISIT", "TRAINER"]);
-  static tokenType = z.enum(["VERIFY_EMAIL", "FORGOT_PASSWORD"]);
   static order = z.enum(["asc", "desc"]).optional();
+  static status = z.enum(["DRAFT", "VISITING", "DONE"]);
 
   static pagination = z.object({ page: z.number().min(1), limit: z.number().min(1).optional() });
   static email = z.string().email("Please provide a valid email");
   static fullName = z
     .string()
     .min(1, "Please provide your name")
-    .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces");
+    .regex(/^[A-Za-z\s]+$/, "Masukkan nama Anda");
 
   static phoneNumber = z
     .string()
@@ -27,75 +25,26 @@ export class schema {
     .min(10, "At least 10 characters")
     .max(12);
 
-  static date = z.string().min(1, "Please pick a date");
-  static dateNullable = z.string().nullable();
-  static password = z.string().min(10, "At least 10 characters");
-  static loginVisitor = z.object({ credential: schema.phoneNumber });
-  static login = z.object({ email: schema.email, credential: schema.password }); // also for next-auth
+  static date = z.string().min(1, "Silakan pilih tanggal");
+  static password = z.string().min(6, "Minimal 6 karakter");
+  static login = z.object({ username: z.string(), password: schema.password }); // also for next-auth
 
-  static user = class {
+  static user = class {};
+  static visit = class {
     static create = z.object({
-      email: schema.email,
-      fullName: schema.fullName,
-      phoneNumber: schema.phoneNumber,
-      birthDate: schema.dateNullable,
-      credential: schema.password,
-      gender: schema.gender,
-    });
-
-    static createVisitor = z
-      .object({
-        email: z
-          .string()
-          .optional()
-          .refine(
-            (email) => {
-              if (email) return regex.email.test(email);
-              return true;
-            },
-            {
-              message: "Please provide a valid email",
-              path: ["email"],
-            }
-          ),
-        fullName: schema.fullName,
-        phoneNumber: schema.phoneNumber,
-        gender: schema.gender,
-        packageTransactionId: z.string().optional(),
-        transactionDate: z.string().optional(),
-      })
-      .refine(
-        ({ packageTransactionId, transactionDate }) => {
-          if (packageTransactionId && !transactionDate) return false;
-          return true;
-        },
-        {
-          message: "Transaction date is required",
-          path: ["transactionDate"],
-        }
-      );
-
-    static update = z.object({
-      body: z.object({
-        email: schema.email,
-        fullName: schema.fullName,
-        phoneNumber: schema.phoneNumber,
-        birthDate: schema.date,
-        gender: schema.gender,
-      }),
-      userId: z.string(),
+      visitorName: z.string(),
+      visitorCompany: z.string(),
+      description: z.string(),
+      phoneNumber: z.string(),
+      startDate: z.string().optional(),
+      startTime: z.string().optional(),
     });
 
     static list = z.object({
       pagination: schema.pagination,
-      sorting: z.string().optional(),
       params: z.object({
-        role: schema.role,
-        fullName: z.string().optional(),
-        phoneNumber: z.string().optional(),
-        email: z.string().optional(),
-        gender: schema.gender.optional(),
-        totalSpending: z.string().optional(),
+        status: schema.status.optional(),
+        search: z.string().optional(),
       }),
     });
   };
@@ -103,7 +52,3 @@ export class schema {
 
 export type Pagination = z.infer<typeof schema.pagination>;
 export type Login = z.infer<typeof schema.login>;
-export type LoginVisitor = z.infer<typeof schema.loginVisitor>;
-export type TokenType = z.infer<typeof schema.tokenType>;
-export type Register = z.infer<typeof schema.user.create>;
-export type RegisterVisitor = z.infer<typeof schema.user.createVisitor>;

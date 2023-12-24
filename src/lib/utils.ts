@@ -24,6 +24,22 @@ export const createUrl = (pathname: string, params: URLSearchParams | ReadonlyUR
   return `${pathname}${queryString}`;
 };
 
+export const formatName = (name: string): string => {
+  const trimmedName = name.trim();
+  const words = trimmedName.split(/\s+/); // Split by one or more spaces
+  const capitalizedWords = words.map((word) => {
+    const lowercaseWord = word.toLowerCase();
+    return lowercaseWord.charAt(0).toUpperCase() + lowercaseWord.slice(1);
+  });
+  const convertedName = capitalizedWords.join(" ");
+  return convertedName;
+};
+
+export const textEllipsis = (text: string, length: number) => {
+  if (!text) return "";
+  return text.length < length ? `${text}` : `${text?.substring(0, length - 3)}...`;
+};
+
 export const createSearchParams = (
   params: Record<string, string | string[]>,
   newParams?: URLSearchParams
@@ -88,4 +104,28 @@ export const formatDateLong = (date: Date): string => {
     month: "long",
     day: "numeric",
   });
+};
+
+export const formatDateTimeLong = (date: Date): string => {
+  return date.toLocaleDateString(LOCALE_TAG, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+export const formatTime = (date: Date): string => {
+  return date.toLocaleTimeString(LOCALE_TAG, {
+    timeStyle: "short",
+  });
+};
+
+export const getDateFromObject = ({ startTime, startDate }: { startTime: string; startDate: string }): Date => {
+  const combinedDateTimeString = `${startDate}T${startTime}`;
+  const localTimeZoneOffset = new Date().getTimezoneOffset();
+  const utcDateTime = new Date(`${combinedDateTimeString}Z`);
+  utcDateTime.setMinutes(utcDateTime.getMinutes() + localTimeZoneOffset);
+  return utcDateTime;
 };

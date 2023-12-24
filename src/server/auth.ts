@@ -4,25 +4,21 @@ import { db } from "@/server/db";
 import { env } from "@/env";
 import { verify } from "argon2";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { schema } from "@/server/api/schema/schema";
+import { schema } from "@/schema";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: { id: string } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
+  session: { strategy: "jwt" },
+  callbacks: {
+    jwt: async ({ token, user }) => ({ ...token, ...user }),
+    session: async ({ session, token }) => ({ ...session, user: { ...session.user, id: token.id } }),
+  },
   secret: env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
@@ -32,10 +28,10 @@ export const authOptions: NextAuthOptions = {
         const parsedCredentials = schema.login.safeParse(credentials);
 
         if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await db.user.findFirst({ where: { email } });
+          const { username, password } = parsedCredentials.data;
+          const user = await db.user.findFirst({ where: { username } });
           if (!user) return null;
-          const passwordsMatch = await verify(user.password, password);
+          const passwordsMatch = await verify(user.hashedPassword, password);
           if (passwordsMatch) return user;
         }
 
@@ -43,15 +39,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  session: { strategy: "jwt" },
-  callbacks: {
-    jwt: async ({ token, user }) => {
-      return { ...token, ...user };
-    },
-    session: async ({ session, token }) => {
-      return { ...session, user: { ...session.user, id: token.id } };
-    },
-  },
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);

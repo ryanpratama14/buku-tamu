@@ -1,14 +1,15 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
-import { schema } from "@/server/api/schema/schema";
-import { THROW_ERROR, THROW_OK } from "@/trpc/shared";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { THROW_OK, THROW_TRPC_ERROR } from "@/trpc/shared";
 import { hash } from "argon2";
+import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
-  register: publicProcedure.input(schema.user.create).mutation(async ({ ctx, input }) => {
-    const { name, email, password } = input;
-    const data = await ctx.db.user.findFirst({ where: { email: input.email } });
-    if (data) THROW_ERROR("CONFLICT");
-    await ctx.db.user.create({ data: { name, email, password: await hash(password) } });
-    return THROW_OK("CREATED");
-  }),
+  create: publicProcedure
+    .input(z.object({ username: z.string(), password: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const data = await ctx.db.user.findFirst({ where: { username: input.username } });
+      if (data) return THROW_TRPC_ERROR("CONFLICT");
+      await ctx.db.user.create({ data: { username: input.username, hashedPassword: await hash(input.password) } });
+      return THROW_OK("CREATED");
+    }),
 });
