@@ -214,15 +214,7 @@ export default function DashboardPage({ searchParams }: Props) {
               dataIndex: "description",
               render: (text: string) => textEllipsis(text, 24),
             },
-            {
-              title: "Status",
-              key: "status",
-              dataIndex: "status",
-              render: (text: Status) => {
-                return <p className={`px-4 shadow py-1 w-fit text-light rounded-xl ${STATUS[text]}`}>{text}</p>;
-              },
-              ...getTableFilter("status"),
-            },
+
             {
               title: "Tanggal",
               key: "startTime",
