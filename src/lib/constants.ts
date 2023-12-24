@@ -30,7 +30,7 @@ export const ICONS = {
 };
 
 export const STATUS: Record<Status, string> = {
-  DRAFT: "bg-red-500",
+  DRAFT: "bg-red-600",
   VISITING: "bg-purple",
   DONE: "bg-green",
 };

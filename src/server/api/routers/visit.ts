@@ -30,7 +30,7 @@ export const visitRouter = createTRPCRouter({
         visitorName: formatName(input.visitorName),
         visitorCompany: input.visitorCompany,
         description: input.description,
-        phoneNumber: input.phoneNumber,
+
         startTime: generatedStartTime,
         endTime: null,
         status: !startDate ? "VISITING" : "DRAFT",

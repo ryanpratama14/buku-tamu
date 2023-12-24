@@ -55,7 +55,6 @@ export default function ModalConfirm({ show, closeModal, data, title, status }: 
                 <section>
                   <p>Nama: {data?.visitorName}</p>
                   <p>Perusahaan: {data?.visitorCompany}</p>
-                  <p>Nomor Telp: {data?.phoneNumber}</p>
                   <p>Waktu berkunjung: {data?.startTime && formatDateTimeLong(data.startTime)}</p>
                 </section>
                 <section className="grid grid-cols-2 gap-2">

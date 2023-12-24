@@ -52,7 +52,7 @@ export default function ModalDelete({ show, closeModal, data }: Props) {
                 <section>
                   <p>Nama: {data?.visitorName}</p>
                   <p>Perusahaan: {data?.visitorCompany}</p>
-                  <p>Nomor Telp: {data?.phoneNumber}</p>
+
                   <p>Waktu berkunjung: {data?.startTime && formatDateTimeLong(data.startTime)}</p>
                 </section>
                 <section className="grid grid-cols-2 gap-2">
@@ -65,7 +65,7 @@ export default function ModalDelete({ show, closeModal, data }: Props) {
                   </button>
                   <button
                     type="button"
-                    className="px-4 py-2 bg-red-500 text-light rounded-md font-medium"
+                    className="px-4 py-2 bg-red-600 text-light rounded-md font-medium"
                     onClick={() => {
                       if (data) handleDelete({ id: data.id });
                       notification.success({ message: "Berhasil dihapus" });

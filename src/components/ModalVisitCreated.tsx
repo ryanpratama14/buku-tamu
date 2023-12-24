@@ -43,7 +43,7 @@ export default function ModalVisitCreated({ show, closeModal, data }: Props) {
                 <section>
                   <p>Nama: {data?.visitorName}</p>
                   <p>Perusahaan: {data?.visitorCompany}</p>
-                  <p>Nomor Telp: {data?.phoneNumber}</p>
+
                   <p>Waktu berkunjung: {data?.startTime && formatDateTimeLong(data.startTime)}</p>
                 </section>
                 <p className="font-semibold underline">Silakan screenshot dan tunjukkan kepada security</p>

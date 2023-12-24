@@ -29,7 +29,6 @@ export default function CreateVisitPage() {
     visitorName: "",
     visitorCompany: "",
     description: "",
-    phoneNumber: "",
     startTime: "",
     startDate: "",
   });
@@ -94,21 +93,6 @@ export default function CreateVisitPage() {
               value={data.visitorCompany}
               id="visitorCompany"
               onChange={handleChange("visitorCompany")}
-              className="bg-light py-4 text-center rounded-b-2xl w-full"
-            />
-          </section>
-        </section>
-        <section className="flex flex-col divide-y divide-black w-full">
-          <label id="phoneNumber" className="text-center bg-light2 rounded-t-2xl">
-            Nomor Telp.
-          </label>
-          <section className="bg-light2 rounded-b-2xl">
-            <input
-              required
-              id="phoneNumber"
-              value={data.phoneNumber}
-              onChange={handleChange("phoneNumber")}
-              placeholder="0899999999999"
               className="bg-light py-4 text-center rounded-b-2xl w-full"
             />
           </section>

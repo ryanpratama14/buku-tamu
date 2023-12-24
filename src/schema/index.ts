@@ -35,7 +35,6 @@ export class schema {
       visitorName: z.string(),
       visitorCompany: z.string(),
       description: z.string(),
-      phoneNumber: z.string(),
       startDate: z.string().optional(),
       startTime: z.string().optional(),
     });

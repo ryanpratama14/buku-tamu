@@ -187,7 +187,6 @@ export default function DashboardPage({ searchParams }: Props) {
               render: (_, item) => {
                 return (
                   <section className="flex gap-2 items-center justify-center">
-                    <Iconify icon="bx:detail" width={25} className="p-1 bg-blue text-light rounded-md" />
                     <Iconify
                       onClick={() => {
                         setModalDelete(true);
@@ -195,7 +194,7 @@ export default function DashboardPage({ searchParams }: Props) {
                       }}
                       icon="mdi:delete"
                       width={25}
-                      className="p-1 bg-red-500 text-light rounded-md"
+                      className="p-1 bg-red-600 text-light rounded-md"
                     />
                     <Iconify
                       onClick={() => {

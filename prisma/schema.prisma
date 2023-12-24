@@ -20,10 +20,9 @@ model Visit {
     visitorName    String
     visitorCompany String
     description    String
-    phoneNumber    String
     startTime      DateTime
     endTime        DateTime?
-    status         Status @default(DRAFT)
+    status         Status    @default(DRAFT)
 
     createdAt DateTime @default(now())
 }

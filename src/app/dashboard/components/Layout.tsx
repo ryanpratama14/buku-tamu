@@ -7,6 +7,8 @@ import { HomeOutlined, DatabaseOutlined } from "@ant-design/icons";
 import { COLORS } from "@/styles/theme";
 import Image from "next/image";
 import logo from "@/assets/logo2.png";
+import Iconify from "@/components/Iconify";
+import { signOut } from "next-auth/react";
 
 type Props = {
   children: React.ReactNode;
@@ -58,6 +60,14 @@ export default function DashboardMenu({ children }: Props) {
                 items={items}
               />
             </section>
+            <button
+              className="flex gap-2 w-full items-center text-light text-lg justify-center bg-red-600 py-2"
+              type="button"
+              onClick={() => signOut()}
+            >
+              <Iconify icon="mdi:logout" />
+              Logout
+            </button>
           </section>
         </Layout.Sider>
         <article className="p-6 w-full min-h-screen flex flex-col gap-6 bg-light">
