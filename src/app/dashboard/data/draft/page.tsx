@@ -58,20 +58,7 @@ export default function DashboardPage({ searchParams }: Props) {
           }}
           className="flex flex-col gap-2 w-52 bg-light p-2 rounded-md shadow"
         >
-          {name === "status" ? (
-            <select
-              value={selectedStatus}
-              name={name}
-              key={name}
-              className="px-2 py-1 rounded-md border-1 border-black/50"
-              onChange={(e) => setSelectedStatus(e.target.value as Status)}
-            >
-              <option value={undefined}>Select Status</option>
-              <option value="DRAFT">DRAFT</option>
-              <option value="VISITING">VISITING</option>
-              <option value="DONE">DONE</option>
-            </select>
-          ) : name === "startTime" ? (
+          {name === "startTime" ? (
             <input
               className="px-2 py-1 rounded-md border-1 border-black/50"
               name={name}
