@@ -58,6 +58,12 @@
   button {
     @apply outline-none active:outline-none focus:outline-none;
   }
+}
+
+@layer components {
+  .animate {
+    @apply transition-all duration-300;
+  }
   /* fixed positions for absolute or fixed position */
   .centered {
     @apply top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;

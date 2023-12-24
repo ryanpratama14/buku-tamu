@@ -44,7 +44,9 @@ export class schema {
       pagination: schema.pagination,
       params: z.object({
         status: schema.status.optional(),
-        search: z.string().optional(),
+        visitorName: z.string().optional(),
+        visitorCompany: z.string().optional(),
+        startTime: z.string().optional(),
       }),
     });
   };

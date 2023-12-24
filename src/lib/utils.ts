@@ -78,16 +78,16 @@ export const getNewDate = (dateString?: string): Date => {
   return new Date();
 };
 
-export const getStartDate = (date: string): string => {
-  const updatedDate = new Date(date);
-  updatedDate.setUTCHours(0, 0, 0, 0);
-  return updatedDate.toISOString();
+export const getStartDate = (dateString: string): Date => {
+  const updatedDate = getNewDate(dateString);
+  updatedDate.setHours(0, 0, 0, 0);
+  return updatedDate;
 };
 
-export const getEndDate = (date: string): string => {
-  const updatedDate = new Date(date);
-  updatedDate.setUTCHours(23, 59, 59, 999);
-  return updatedDate.toISOString();
+export const getEndDate = (dateString: string): Date => {
+  const updatedDate = getNewDate(dateString);
+  updatedDate.setHours(23, 59, 59, 999);
+  return updatedDate;
 };
 
 export const formatDate = (dateString: Date): string => {

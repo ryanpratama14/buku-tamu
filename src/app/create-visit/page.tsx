@@ -146,7 +146,7 @@ export default function CreateVisitPage() {
               </label>
               <section className="bg-light2 rounded-b-2xl">
                 <input
-                  required={isVisitingNow}
+                  required={!isVisitingNow}
                   value={data.startDate}
                   id="startDate"
                   onChange={handleChange("startDate")}
@@ -162,7 +162,7 @@ export default function CreateVisitPage() {
               <section className="bg-light2 rounded-b-2xl">
                 <input
                   value={data.startTime}
-                  required={isVisitingNow}
+                  required={!isVisitingNow}
                   id="startTime"
                   onChange={handleChange("startTime")}
                   type="time"

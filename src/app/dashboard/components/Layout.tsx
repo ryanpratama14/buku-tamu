@@ -26,11 +26,11 @@ const items: MenuItem[] = [
     icon: <DatabaseOutlined style={{ fontSize: "16px", color: COLORS.light }} />,
     children: [
       {
-        key: "/data/ongoing",
+        key: "/dashboard/data/ongoing",
         label: <small className="select-none">Sedang Berkunjung</small>,
       },
       {
-        key: "/data/draft",
+        key: "/dashboard/data/draft",
         label: <small className="select-none">Berkunjung Nanti</small>,
       },
     ],

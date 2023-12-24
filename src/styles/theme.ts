@@ -30,6 +30,7 @@ export const antdTheme: ThemeConfig = {
       itemSelectedBg: COLORS.blue2,
       itemBg: COLORS.blue,
       itemHoverBg: COLORS.blue2,
+      itemHoverColor: COLORS.light,
       itemActiveBg: COLORS.blue2,
       itemColor: COLORS.light,
     },

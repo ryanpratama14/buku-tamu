@@ -9,11 +9,11 @@ type Props = {
   className?: string;
   rotate?: number;
   onClick?: React.MouseEventHandler<SVGSVGElement>;
-  collapsed?: boolean;
+
   color?: string;
 };
 
-export default function Iconify({ icon, width, className, rotate, onClick, collapsed, color }: Props) {
+export default function Iconify({ icon, width, className, rotate, onClick, color }: Props) {
   return (
     <Icon
       onClick={onClick}
@@ -23,7 +23,6 @@ export default function Iconify({ icon, width, className, rotate, onClick, colla
       color={color}
       className={cn("animate", className, {
         "cursor-pointer": onClick,
-        "absolute centered": collapsed,
       })}
     />
   );
