@@ -59,6 +59,7 @@ export default function CreateVisitPage() {
           router.push("/");
         }}
         data={newData}
+        isVisitingNow={isVisitingNow}
       />
       <form
         onSubmit={handleSubmit}

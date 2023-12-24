@@ -7,9 +7,10 @@ type Props = {
   show: boolean;
   closeModal: () => void;
   data: Visit | null;
+  isVisitingNow: boolean;
 };
 
-export default function ModalVisitCreated({ show, closeModal, data }: Props) {
+export default function ModalVisitCreated({ show, closeModal, data, isVisitingNow }: Props) {
   return (
     <Transition appear show={show} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -46,7 +47,10 @@ export default function ModalVisitCreated({ show, closeModal, data }: Props) {
 
                   <p>Waktu berkunjung: {data?.startTime && formatDateTimeLong(data.startTime)}</p>
                 </section>
-                <p className="font-semibold underline">Silakan screenshot dan tunjukkan kepada security</p>
+                {isVisitingNow ? null : (
+                  <p className="font-semibold underline">Silakan screenshot dan tunjukkan kepada security</p>
+                )}
+
                 <button type="button" className="px-4 py-2 bg-green text-light rounded-md font-medium" onClick={closeModal}>
                   Baik, terima kasih!
                 </button>
