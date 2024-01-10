@@ -25,13 +25,7 @@ export const api = createTRPCProxyClient<typeof appRouter>({
         observable((observer) => {
           createContext()
             .then((ctx) => {
-              return callProcedure({
-                procedures: appRouter._def.procedures,
-                path: op.path,
-                rawInput: op.input,
-                ctx,
-                type: op.type,
-              });
+              return callProcedure({ procedures: appRouter._def.procedures, path: op.path, rawInput: op.input, ctx, type: op.type });
             })
             .then((data) => {
               observer.next({ result: { data } });
