@@ -4,13 +4,14 @@ import { type VisitListInputParams, type VisitListInput } from "@/server/api/rou
 import { type SearchParams } from "@/types";
 import { api } from "@/trpc/react";
 import { Table } from "antd";
-import { cn, createUrl, formatDateLong, formatTime, textEllipsis } from "@/lib/utils";
+import { cn, createUrl, formatDateLong, formatTime, getTodayDate, textEllipsis } from "@/lib/utils";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Iconify from "@/components/Iconify";
 import { ICONS, STATUS } from "@/lib/constants";
 import { type FilterDropdownProps } from "antd/es/table/interface";
 import { type Status } from "@prisma/client";
 import { useState } from "react";
+import { Workbook } from "exceljs";
 
 type Props = {
   searchParams: SearchParams;
@@ -110,12 +111,9 @@ export default function DashboardPage({ searchParams }: Props) {
     },
     filterIcon: () => (
       <section
-        className={cn(
-          "aspect-square w-7 text-light hover:text-black hover:bg-light relative rounded-full hover:shadow-lg animate",
-          {
-            "bg-light text-black": Object.keys(searchParams).includes(name),
-          }
-        )}
+        className={cn("aspect-square w-7 text-light hover:text-black hover:bg-light relative rounded-full hover:shadow-lg animate", {
+          "bg-light text-black": Object.keys(searchParams).includes(name),
+        })}
       >
         <Iconify icon={ICONS.search} width={22} className="absolute centered" />
       </section>
@@ -127,24 +125,103 @@ export default function DashboardPage({ searchParams }: Props) {
     redirect(createUrl("/dashboard", newParams));
   }
 
+  const renderExcel = async () => {
+    if (data?.data?.length) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet();
+
+      const columns = [
+        { header: "Nama", key: "visitorName", width: 20 },
+        { header: "Perusahaan", key: "visitorCompany", width: 20 },
+        { header: "Keperluan", key: "description", width: 30 },
+        { header: "Status", key: "status" },
+        { header: "Tanggal", key: "startTime", width: 20 },
+        { header: "Waktu Mulai", key: "startTime2", width: 15 },
+        { header: "Waktu Selesai", key: "endTime", width: 15 },
+      ];
+
+      worksheet.columns = columns;
+
+      for (let i = 0; i < columns.length; i++) {
+        const cellAddress = String.fromCharCode(65 + i) + "1"; // 'A' corresponds to 65 in ASCII
+        worksheet.getCell(cellAddress).font = { size: 12 };
+        worksheet.getCell(cellAddress).fill = {
+          type: "pattern",
+          pattern: "gray125",
+        };
+        worksheet.getCell(cellAddress).border = {
+          top: { style: "thin", color: { argb: "000000" } },
+          left: { style: "thin", color: { argb: "000000" } },
+          bottom: { style: "thin", color: { argb: "000000" } },
+          right: { style: "thin", color: { argb: "000000" } },
+        };
+      }
+
+      if (data?.data?.length) {
+        data?.data?.forEach((item) => {
+          worksheet.addRow({
+            ...item,
+            description: textEllipsis(item.description, 24),
+            startTime: formatDateLong(item.startTime),
+            startTime2: formatTime(item.startTime),
+            endTime: item?.endTime ? formatTime(item.endTime) : "-",
+          });
+        });
+      }
+
+      const startData = 1;
+
+      for (let j = 0; j < data.data.length + 1; j++) {
+        for (let i = 0; i < columns.length; i++) {
+          const cellAddress = String.fromCharCode(65 + i) + (startData + j);
+          const cell = worksheet.getCell(cellAddress);
+          cell.font = { size: 12 };
+          cell.border = {
+            top: { style: "thin", color: { argb: "000000" } },
+            left: { style: "thin", color: { argb: "000000" } },
+            bottom: { style: "thin", color: { argb: "000000" } },
+            right: { style: "thin", color: { argb: "000000" } },
+          };
+        }
+      }
+
+      const blob = await workbook.xlsx.writeBuffer();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([blob]));
+      link.download = `LAPORAN.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <section className="flex flex-col gap-4">
-      <section className="flex flex-col gap-1">
-        <label className="text-lg">Limit</label>
-        <select
-          value={searchParams.limit}
-          name="limit"
-          key="limit"
-          className="text-center px-2 py-1 w-fit rounded-md border-1 border-black/50"
-          onChange={(e) => {
-            newParams.set("limit", e.target.value);
-            router.push(createUrl("/dashboard", newParams));
-          }}
+      <section className="flex gap-4 items-end">
+        <section className="flex flex-col gap-1">
+          <label className="text-lg">Limit</label>
+          <select
+            value={searchParams.limit}
+            name="limit"
+            key="limit"
+            className="text-center px-2 py-1 w-fit rounded-md border-1 border-black/50"
+            onChange={(e) => {
+              newParams.set("limit", e.target.value);
+              router.push(createUrl("/dashboard", newParams));
+            }}
+          >
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </section>
+        <button
+          type="button"
+          onClick={renderExcel}
+          className="bg-gray py-0.5 px-2 rounded-md text-white flex gap-1 items-center text-lg"
         >
-          <option value="30">30</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+          <Iconify width={25} icon="mdi:export" /> Export
+        </button>
       </section>
       <Table
         onChange={(pagination) => {
