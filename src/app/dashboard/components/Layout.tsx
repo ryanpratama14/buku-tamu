@@ -73,11 +73,11 @@ export default function DashboardMenu({ children, session }: Props) {
           </section>
         </Layout.Sider>
         <article className="p-6 w-full min-h-screen flex flex-col gap-6 bg-light">
-          <section className="bg-white w-full p-12 shadow-lg flex h-fit rounded-md justify-between items-center">
+          <section className="bg-white w-full p-6 shadow-lg flex h-fit rounded-md justify-between items-center">
             <Image src={logo} className="w-44 aspect-auto" alt="Buku Tamu | PT Abimanyu Sekar Nusantara" />
             <section className="flex flex-col gap-2">
               <p className="font-bold text-xl">Username: {session.user.name}</p>
-              <p className="text-lg">sebagai {session.user.role}</p>
+              <p className="text-lg">sebagai {session.user.role === "SPV" ? "Supervisor" : "Admin"}</p>
             </section>
           </section>
           {children}
