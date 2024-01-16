@@ -1,11 +1,11 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
-import { db } from "@/server/db";
 import { env } from "@/env";
 import { verify } from "argon2";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { schema } from "@/schema";
 import { type Role } from "@prisma/client";
+import { db } from "./db";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
     jwt: async ({ token, user }) => ({ ...token, ...user }),
     session: async ({ session, token }) => ({
       ...session,
-      user: { ...session.user, id: token.id, role: token.role, name: token.username },
+      user: { ...session.user, id: token.id, role: token.role as Role, name: token.username as string },
     }),
   },
   secret: env.NEXTAUTH_SECRET,
