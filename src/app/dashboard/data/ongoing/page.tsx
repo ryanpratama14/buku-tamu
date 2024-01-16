@@ -7,18 +7,20 @@ import { Table } from "antd";
 import { cn, createUrl, formatDateLong, formatTime, textEllipsis } from "@/lib/utils";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Iconify from "@/components/Iconify";
-import { ICONS, STATUS } from "@/lib/constants";
+import { ICONS } from "@/lib/constants";
 import { type FilterDropdownProps } from "antd/es/table/interface";
 import { type Visit, type Status } from "@prisma/client";
 import { Fragment, useState } from "react";
 import ModalDelete from "@/components/ModalDelete";
 import ModalConfirm from "@/components/ModalConfirm";
+import { useZustand } from "@/global/store";
 
 type Props = {
   searchParams: SearchParams;
 };
 
 export default function DashboardPage({ searchParams }: Props) {
+  const { session } = useZustand();
   const router = useRouter();
   const newSearchParams = useSearchParams();
   const newParams = new URLSearchParams(newSearchParams.toString());
@@ -102,12 +104,9 @@ export default function DashboardPage({ searchParams }: Props) {
     },
     filterIcon: () => (
       <section
-        className={cn(
-          "aspect-square w-7 text-light hover:text-black hover:bg-light relative rounded-full hover:shadow-lg animate",
-          {
-            "bg-light text-black": Object.keys(searchParams).includes(name),
-          }
-        )}
+        className={cn("aspect-square w-7 text-light hover:text-black hover:bg-light relative rounded-full hover:shadow-lg animate", {
+          "bg-light text-black": Object.keys(searchParams).includes(name),
+        })}
       >
         <Iconify icon={ICONS.search} width={22} className="absolute centered" />
       </section>
@@ -172,7 +171,7 @@ export default function DashboardPage({ searchParams }: Props) {
               align: "center",
               fixed: "left",
               render: (_, item) => {
-                return (
+                return session?.user.role === "ADMIN" ? (
                   <section className="flex gap-2 items-center justify-center">
                     <Iconify
                       onClick={() => {
@@ -193,7 +192,7 @@ export default function DashboardPage({ searchParams }: Props) {
                       className="p-1 bg-green text-light rounded-md"
                     />
                   </section>
-                );
+                ) : null;
               },
             },
             {

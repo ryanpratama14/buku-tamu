@@ -3,6 +3,8 @@ import { Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import { TRPCReactProvider } from "@/trpc/react";
 import AntdProvider from "@/components/AntdProvider";
+import HigherOrderComponent from "@/global/HigherOrderComponent";
+import { getServerAuthSession } from "@/server/auth";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -19,15 +21,19 @@ export const metadata = {
 
 type Props = { children: React.ReactNode };
 
-export default function RootLayout({ children }: Props) {
+export default async function RootLayout({ children }: Props) {
+  const session = await getServerAuthSession();
+
   return (
     <html lang="en" className={poppins.variable}>
       <body className="font-poppins">
-        <TRPCReactProvider cookies={cookies().toString()}>
-          <AntdProvider>
-            <main>{children}</main>
-          </AntdProvider>
-        </TRPCReactProvider>
+        <HigherOrderComponent session={session}>
+          <TRPCReactProvider cookies={cookies().toString()}>
+            <AntdProvider>
+              <main>{children}</main>
+            </AntdProvider>
+          </TRPCReactProvider>
+        </HigherOrderComponent>
       </body>
     </html>
   );

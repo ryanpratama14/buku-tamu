@@ -5,10 +5,11 @@ import { env } from "@/env";
 import { verify } from "argon2";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { schema } from "@/schema";
+import { type Role } from "@prisma/client";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: { id: string } & DefaultSession["user"];
+    user: { id: string; role: Role } & DefaultSession["user"];
   }
 }
 
@@ -17,7 +18,7 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   callbacks: {
     jwt: async ({ token, user }) => ({ ...token, ...user }),
-    session: async ({ session, token }) => ({ ...session, user: { ...session.user, id: token.id } }),
+    session: async ({ session, token }) => ({ ...session, user: { ...session.user, id: token.id, role: token.role } }),
   },
   secret: env.NEXTAUTH_SECRET,
   providers: [

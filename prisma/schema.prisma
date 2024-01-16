@@ -11,6 +11,7 @@ model User {
     id             String @id @default(auto()) @map("_id") @db.ObjectId
     username       String @unique
     hashedPassword String
+    role           Role   @default(ADMIN)
 
     createdAt DateTime @default(now())
 }
@@ -31,4 +32,9 @@ enum Status {
     DRAFT
     VISITING
     DONE
+}
+
+enum Role {
+    ADMIN
+    SPV
 }
