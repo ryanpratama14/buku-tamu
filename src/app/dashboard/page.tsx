@@ -4,7 +4,7 @@ import { type VisitListInputParams, type VisitListInput } from "@/server/api/rou
 import { type SearchParams } from "@/types";
 import { api } from "@/trpc/react";
 import { Table } from "antd";
-import { cn, createUrl, formatDateLong, formatTime, getTodayDate, textEllipsis } from "@/lib/utils";
+import { cn, createUrl, formatDateLong, formatTime, textEllipsis } from "@/lib/utils";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import Iconify from "@/components/Iconify";
 import { ICONS, STATUS } from "@/lib/constants";

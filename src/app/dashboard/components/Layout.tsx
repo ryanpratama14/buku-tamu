@@ -9,9 +9,11 @@ import Image from "next/image";
 import logo from "@/assets/logo2.png";
 import Iconify from "@/components/Iconify";
 import { signOut } from "next-auth/react";
+import { type Session } from "next-auth";
 
 type Props = {
   children: React.ReactNode;
+  session: Session;
 };
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -39,7 +41,7 @@ const items: MenuItem[] = [
   },
 ];
 
-export default function DashboardMenu({ children }: Props) {
+export default function DashboardMenu({ children, session }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -71,8 +73,12 @@ export default function DashboardMenu({ children }: Props) {
           </section>
         </Layout.Sider>
         <article className="p-6 w-full min-h-screen flex flex-col gap-6 bg-light">
-          <section className="bg-white w-full p-12 shadow-lg flex h-fit rounded-md">
+          <section className="bg-white w-full p-12 shadow-lg flex h-fit rounded-md justify-between items-center">
             <Image src={logo} className="w-44 aspect-auto" alt="Buku Tamu | PT Abimanyu Sekar Nusantara" />
+            <section className="flex flex-col gap-2">
+              <p className="font-bold text-xl">Username: {session.user.name}</p>
+              <p className="text-lg">sebagai {session.user.role}</p>
+            </section>
           </section>
           {children}
         </article>
